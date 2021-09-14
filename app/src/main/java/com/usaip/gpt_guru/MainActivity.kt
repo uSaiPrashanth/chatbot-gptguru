@@ -20,32 +20,46 @@ import org.json.JSONObject
 import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity() {
-    val demoConversation:String = "User:Hey buddy!\n" +
-            "AI: Hello good sir!\n" +
-            "User: Heya! Should we go to a movie?\n" +
-            "AI: Movie! omg am I your valentine?\n" +
-            "User: No smh. You're my best friend.\n" +
-            "AI: awww! Thank you!" + //you can update the responses to suit your needs
-
-            "\n\n###\n\n" // add more examples with this as pad token
+    val demoConversation:String =
+        "User: Hey buddy!\n" +
+        "AI: Hello good sir!\n" +
+        "User: Heya! Should we go to a movie?\n" +
+        "AI: Movie! omg am I your valentine?\n" +
+        "User: No smh. You're my best friend.\n" +
+        "AI: awww! Thank you!" + //you can update the responses to suit your needs
+        "\n\n###\n\n" // add more examples with this as pad token
+    private lateinit var model_type:String
     private lateinit var volleyRequestQueue: RequestQueue
     private lateinit var mChatView: ChatView
     var conversation:String = "User:"
-    fun getTextFromResponse(json:JSONObject):String{
-        val arr:JSONArray = json.get("choices") as JSONArray
+    fun getTextFromResponseOpenAI(json:JSONObject):String{
+        val arr:JSONArray = json.getJSONArray("choices")
         val res = arr[0] as JSONObject
-        var text = res.get("text") as String
+        var text = res.getString("text")
         Log.d("AI convo",res.toString())
         text = text.replace("\n\n","\n")
         text = text.split("User:")[0].split("AI:")[0]
-        if(text[text.length - 1] == '\n'){
-            text = text.substring(0,text.length - 1)
-        }
+        text = text.trim()
+        return text
+    }
+
+    fun getTextFromResponseAI21(json:JSONObject):String{
+        val arr:JSONArray = json.getJSONArray("completions")
+        val res = arr[0] as JSONObject
+        val data = res.getJSONObject("data")
+        var text = data.getString("text")
+        text = text.trim()
         return text
     }
     fun displayResponse(json: JSONObject){
         //uses the response text to create a chatview message and display it
-        val text:String = getTextFromResponse(json)
+        val text:String
+        if(model_type == "OpenAI"){
+            text = getTextFromResponseOpenAI(json)
+        }
+        else{
+            text = getTextFromResponseAI21(json)
+        }
         conversation += "$text\nUser:"
         val message = Message()
         message.type = Message.LeftSimpleMessage
@@ -56,15 +70,27 @@ class MainActivity : AppCompatActivity() {
     fun conveyError(error:VolleyError){
         Toast.makeText(this,error.toString(),Toast.LENGTH_LONG).show()
     }
-    fun communicate(text: String,engine: String = "davinci"){
+    fun communicate(text: String,engine: String){
         //sends request to OpenAI
         val json = JSONObject()
         json.put("prompt",demoConversation + text)
-        json.put("max_tokens",30)
         json.put("temperature",0.9)
-        json.put("presence_penalty",1.5)
-        json.put("frequency_penalty",1.5)
-        val url =  "https://api.openai.com/v1/engines/$engine/completions"
+        if(model_type == "OpenAI"){
+            json.put("max_tokens",30)
+            json.put("presence_penalty",1.5)
+            json.put("frequency_penalty",1.5)
+        }
+        else{
+            json.put("maxTokens",30)
+            json.put("stopSequences",JSONArray(arrayOf("User:","AI:","###")))
+        }
+        val url:String
+        if(model_type == "OpenAI"){
+            url = "https://api.openai.com/v1/engines/$engine/completions"
+        }
+        else{
+            url = "https://api.ai21.com/studio/v1/$engine/complete"
+        }
         val req = object: JsonObjectRequest(Method.POST,url,json,
             Response.Listener {
                 response -> displayResponse(response)
@@ -77,7 +103,7 @@ class MainActivity : AppCompatActivity() {
             override fun getHeaders():Map<String,String>{
                 val headers = HashMap<String,String>()
                 val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-                val api_key = sharedPreferences.getString("openai_key","")
+                val api_key = sharedPreferences.getString("model_key","")
                 headers["Content-Type"] = "application/json"
                 headers["Authorization"] = "Bearer $api_key"
                 return headers
@@ -93,6 +119,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        model_type = sharedPreferences.getString("model_type","") as String
+        val engine = sharedPreferences.getString("engine","") as String
         volleyRequestQueue = Volley.newRequestQueue(this)
         volleyRequestQueue.start()
         mChatView = findViewById<View>(R.id.chat_view) as ChatView
@@ -102,10 +131,10 @@ class MainActivity : AppCompatActivity() {
                 message.body = chat
                 message.userName = "User"
                 message.type = Message.RightSimpleMessage
-
             mChatView.addMessage(message)
-            conversation += "$chat\nAI:"
-            communicate(conversation)
+            conversation += " $chat\nAI:"
+            communicate(conversation,engine)
+
         }
 
     }

@@ -9,4 +9,18 @@
         <item>reply</item>
         <item>reply_all</item>
     </string-array>
+
+    <string-array name="model_types">
+        <item>AI21</item>
+        <item>OpenAI</item>
+    </string-array>
+
+    <string-array name="engine">
+        <item>j1-large</item>
+        <item>j1-jumbo</item>
+        <item>davinci</item>
+        <item>curie</item>
+        <item>babbage</item>
+        <item>ada</item>
+    </string-array>
 </resources>

@@ -3,10 +3,20 @@
     <PreferenceCategory app:title="@string/api_keys_title">
 
         <EditTextPreference
-            app:key="openai_key"
-            app:title="@string/openai_key_title"
+            app:key="model_key"
+            app:title="@string/model_key_title"
             app:persistent="true"
             app:useSimpleSummaryProvider="true" />
+        <DropDownPreference
+            app:key="model_type"
+            app:title="Select your model type"
+            app:entryValues="@array/model_types"
+            app:entries="@array/model_types"/>
+        <DropDownPreference
+            app:key="engine"
+            app:title="Select your engine"
+            app:entryValues="@array/engine"
+            app:entries="@array/engine"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

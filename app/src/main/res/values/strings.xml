@@ -3,6 +3,5 @@
     <string name="settings">Settings</string>
     <string name="title_activity_settings">@string/settings</string>
     <string name="api_keys_title">API Keys</string>
-    <string name="openai_key_title">OpenAI Key</string>
-    <string name="openai_key_prompt">Enter your OpenAI key here</string>
+    <string name="model_key_title">Model Key</string>
 </resources>
