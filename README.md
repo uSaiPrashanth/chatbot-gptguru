@@ -1,11 +1,11 @@
-# openai-chatbot-gptguru
-A simple chatbot, designed in kotlin using OpenAI api
+# chatbot-gptguru
+A simple chatbot, designed in kotlin using OpenAI and AI21 api
 
 # ACKNOWLEDGEMENTS
 Many thanks to @github/shrikanth7698 for providing the [ChatView UI](https://github.com/shrikanth7698/ChatView)
 
 # Usage
-- Download the apk from [here](../app/release)
+- Download the apk from [here](../master/app/release/app-release.apk)
 - Go to settings and set your API key
 - Select your model based on the key you entered
 - Select your engine
