@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.shrikanthravi.chatview.widget.ChatView
+        android:id="@+id/chat_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:leftBubbleLayoutColor="#ff7b7b"
+        app:leftBubbleTextColor="@android:color/white"
+        app:rightBubbleLayoutColor="@color/colorAccent2"
+        app:rightBubbleTextColor="@android:color/black"
+        app:showSenderLayout="true"
+        app:showSenderName="true" />
+
+</FrameLayout>
