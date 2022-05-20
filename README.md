@@ -1,5 +1,5 @@
 # chatbot-gptguru
-A simple chatbot, designed in kotlin using OpenAI and AI21 api
+A simple chatbot, designed in kotlin using OpenAI and AI21 apis to demonstrate conversation capabilites of large language models
 
 # ACKNOWLEDGEMENTS
 Many thanks to @github/shrikanth7698 for providing the [ChatView UI](https://github.com/shrikanth7698/ChatView)
